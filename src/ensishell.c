@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "variante.h"
 #include "readcmd.h"
@@ -56,6 +57,29 @@ void terminate(char *line) {
 	  free(line);
 	printf("exit\n");
 	exit(0);
+}
+
+void execute(struct cmdline *l){
+	pid_t pid = fork();
+	
+	switch (pid){
+	case -1:
+		perror("fork:");
+		break;
+	case 0:
+		//son
+		/*EXECVP
+		first argument: binary executable file that is a part of the PATH environment variable. This is an char* string.
+		second argument: presents the list of arguments to command. This is an array of char* strings.*/
+		execvp(l->seq[0][0], l->seq[0]);
+		
+		break;
+	default:
+		//father
+
+		break;
+	
+	}
 }
 
 
@@ -122,12 +146,13 @@ int main() {
 		/* Display each command of the pipe */
 		for (i=0; l->seq[i]!=0; i++) {
 			char **cmd = l->seq[i];
-			printf("seq[%d]: ", i);
+			printf("seq[%d]: oi", i);
                         for (j=0; cmd[j]!=0; j++) {
                                 printf("'%s' ", cmd[j]);
                         }
 			printf("\n");
 		}
-	}
 
+		execute(l);
+	}
 }
